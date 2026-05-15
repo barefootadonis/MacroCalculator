@@ -1,0 +1,83 @@
+﻿@model List<MacroCalculator.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Notifications</p>
+            <h1>Notifications</h1>
+            <p class="muted-text">Stay up to date with your goals, reminders and progress updates.</p>
+        </div>
+    </section>
+
+    @if (!Model.Any())
+    {
+        <div class="card">
+            <p class="muted-text">No notifications yet.</p>
+        </div>
+    }
+    else
+    {
+        <section class="notification-list">
+            @foreach (var item in Model)
+            {
+                <div class="notification-card @(item.IsRead ? "read" : "unread")">
+
+                    <div class="notification-icon">
+                        @if (item.NotificationType == "Success")
+                        {
+                            <span>🎯</span>
+                        }
+                        else if (item.NotificationType == "Warning")
+                        {
+                            <span>⚠️</span>
+                        }
+                        else if (item.NotificationType == "Milestone")
+                        {
+                            <span>🏆</span>
+                        }
+                        else
+                        {
+                            <span>💬</span>
+                        }
+                    </div>
+
+                    <div class="notification-content">
+                        <div class="notification-top-row">
+                            <h2>@item.Title</h2>
+
+                            @if (!item.IsRead)
+                            {
+                                <span class="unread-dot"></span>
+                            }
+                        </div>
+
+                        <p>@item.Message</p>
+
+                        <div class="notification-bottom-row">
+                            <span class="notification-pill @item.NotificationType.ToLower()">
+                                @item.NotificationType
+                            </span>
+
+                            <small>@item.CreatedDate.ToString("dd MMM yyyy HH:mm")</small>
+                        </div>
+                    </div>
+
+                    @if (!item.IsRead)
+                    {
+                        <form asp-controller="Home" asp-action="MarkNotificationRead" method="post">
+                            <input type="hidden" name="id" value="@item.NotificationId" />
+                            <button type="submit" class="btn-secondary">Mark read</button>
+                        </form>
+                    }
+
+                </div>
+            }
+        </section>
+    }
+
+</div>

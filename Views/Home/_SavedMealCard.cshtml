@@ -1,0 +1,53 @@
+﻿@model MacroCalculator.Models.SavedMeal
+
+<div class="saved-meal-card">
+    <div class="saved-meal-header">
+        <div>
+            <h2>@Model.MealName</h2>
+            <p>@Model.MealCategory · @Model.ServingSize</p>
+        </div>
+
+        <strong>@Model.TotalCalories kcal</strong>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Description))
+    {
+        <p class="muted-text">@Model.Description</p>
+    }
+
+    <div class="daily-log-macro-grid">
+        <div class="macro-summary-box protein-box">
+            <span>Protein</span>
+            <strong>@Model.Protein.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box carbs-box">
+            <span>Carbs</span>
+            <strong>@Model.Carbs.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box fat-box">
+            <span>Fat</span>
+            <strong>@Model.Fat.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box fiber-box">
+            <span>Fiber</span>
+            <strong>@Model.Fiber.ToString("0.00") g</strong>
+        </div>
+    </div>
+
+    <div class="meal-card-actions">
+        <a asp-controller="Home"
+               asp-action="EditMeal"
+               asp-route-id="@Model.SavedMealId"
+               class="btn-secondary">
+            Edit
+        </a>
+
+        <form asp-controller="Home" asp-action="DeleteMeal" method="post">
+            <input type="hidden" name="id" value="@Model.SavedMealId" />
+            <button type="submit" class="btn-danger">Delete</button>
+        </form>
+    </div>
+</div>

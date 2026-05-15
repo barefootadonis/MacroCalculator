@@ -1,0 +1,69 @@
+﻿@model MacroCalculator.Models.Ingredient
+
+<div class="saved-meal-card">
+
+    <div class="saved-meal-header">
+        <div>
+            <h2>@Model.IngredientName</h2>
+
+            <p>
+                @Model.Category
+                ·
+                @(Model.MeasurementType == "Unit"
+                    ? $"Per {Model.UnitName}"
+                    : "Per 100g")
+            </p>
+        </div>
+
+        <strong>
+            @Model.CaloriesPer100g kcal
+        </strong>
+    </div>
+
+    <div class="daily-log-macro-grid">
+
+        <div class="macro-summary-box protein-box">
+            <span>Protein</span>
+            <strong>@Model.ProteinPer100g.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box carbs-box">
+            <span>Carbs</span>
+            <strong>@Model.CarbsPer100g.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box fat-box">
+            <span>Fat</span>
+            <strong>@Model.FatPer100g.ToString("0.00") g</strong>
+        </div>
+
+        <div class="macro-summary-box fiber-box">
+            <span>Fiber</span>
+            <strong>@Model.FiberPer100g.ToString("0.00") g</strong>
+        </div>
+
+    </div>
+
+    <div class="saved-meal-actions">
+
+        <a class="btn-secondary"
+               asp-controller="Home"
+               asp-action="EditIngredient"
+               asp-route-id="@Model.IngredientId">
+            Edit
+        </a>
+
+        <form asp-controller="Home"
+              asp-action="DeleteIngredient"
+              asp-route-id="@Model.IngredientId"
+              method="post">
+
+            <button type="submit" class="btn-danger">
+                Delete
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

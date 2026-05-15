@@ -1,0 +1,76 @@
+﻿@model List<MacroCalculator.Models.User>
+
+@{
+    ViewData["Title"] = "Admin Users";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Admin</p>
+            <h1>All Users</h1>
+            <p class="muted-text">View and deactivate user accounts.</p>
+        </div>
+    </section>
+
+    <div class="card">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.UserId</td>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>@user.AccountStatus</td>
+                        <td>@user.CreatedDate.ToString("dd MMM yyyy")</td>
+                        <td>
+                            @if (user.Role != "Admin")
+                            {
+                                <form asp-controller="Home"
+                                      asp-action="ToggleUserStatus"
+                                      method="post">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@user.UserId" />
+
+                                    @if (user.AccountStatus == "Inactive")
+                                    {
+                                        <button class="btn-success"
+                                                type="submit">
+                                            Activate
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-danger"
+                                                type="submit">
+                                            Deactivate
+                                        </button>
+                                    }
+
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

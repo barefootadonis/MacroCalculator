@@ -1,0 +1,201 @@
+﻿@model MacroCalculator.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var todayLog = Model.TodayLog;
+    var user = Model.User;
+
+    var todayEntries = todayLog?.FoodEntries?.ToList() ?? new List<MacroCalculator.Models.FoodEntry>();
+
+    int caloriesConsumed = todayEntries.Sum(e => e.Calories);
+    decimal proteinConsumed = todayEntries.Sum(e => e.Protein);
+    decimal carbsConsumed = todayEntries.Sum(e => e.Carbs);
+    decimal fatConsumed = todayEntries.Sum(e => e.Fat);
+    decimal fiberConsumed = todayEntries.Sum(e => e.Fiber);
+
+    int caloriesRemaining = user.DailyCalorieGoal - caloriesConsumed;
+    decimal proteinRemaining = user.TargetProtein - proteinConsumed;
+    decimal carbsRemaining = user.TargetCarbs - carbsConsumed;
+    decimal fatRemaining = user.TargetFat - fatConsumed;
+    decimal fiberRemaining = user.TargetFiber - fiberConsumed;
+
+    decimal calorieProgress = user.DailyCalorieGoal > 0
+        ? Math.Min(((decimal)caloriesConsumed / user.DailyCalorieGoal) * 100, 100)
+        : 0;
+
+    decimal proteinProgress = user.TargetProtein > 0
+        ? Math.Min((proteinConsumed / user.TargetProtein) * 100, 100)
+        : 0;
+
+    decimal carbsProgress = user.TargetCarbs > 0
+        ? Math.Min((carbsConsumed / user.TargetCarbs) * 100, 100)
+        : 0;
+
+    decimal fatProgress = user.TargetFat > 0
+        ? Math.Min((fatConsumed / user.TargetFat) * 100, 100)
+        : 0;
+
+    decimal fiberProgress = user.TargetFiber > 0
+        ? Math.Min((fiberConsumed / user.TargetFiber) * 100, 100)
+        : 0;
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Welcome back</p>
+            <h1>@user.Username</h1>
+            <p class="muted-text">Track today’s food, calories and macros.</p>
+        </div>
+
+        <a asp-controller="Home" asp-action="AddFood" class="btn-primary">
+            + Add Food
+        </a>
+    </section>
+
+    <section class="dashboard-grid">
+
+        <div class="card goals-card">
+            <h2>Today’s Goals</h2>
+
+            <div class="calorie-circle" style="background: conic-gradient(var(--calories) @calorieProgress.ToString("0.##")%, #edf2f7 0);">
+                <span>@caloriesRemaining</span>
+                <small>kcal left</small>
+            </div>
+
+            <div class="macro-list">
+
+                <div class="macro-item">
+                    <div class="macro-label">
+                        <span>Calories</span>
+                        <span>@caloriesConsumed / @user.DailyCalorieGoal kcal</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill fill-calories" style="width: @calorieProgress.ToString("0.##")%;"></div>
+                    </div>
+                </div>
+
+                <div class="macro-item">
+                    <div class="macro-label">
+                        <span>Protein</span>
+                        <span>@proteinConsumed.ToString("0.00") / @user.TargetProtein.ToString("0.00") g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill fill-protein" style="width: @proteinProgress.ToString("0.##")%;"></div>
+                    </div>
+                </div>
+
+                <div class="macro-item">
+                    <div class="macro-label">
+                        <span>Carbs</span>
+                        <span>@carbsConsumed.ToString("0.00") / @user.TargetCarbs.ToString("0.00") g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill fill-carbs" style="width: @carbsProgress.ToString("0.##")%;"></div>
+                    </div>
+                </div>
+
+                <div class="macro-item">
+                    <div class="macro-label">
+                        <span>Fat</span>
+                        <span>@fatConsumed.ToString("0.00") / @user.TargetFat.ToString("0.00") g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill fill-fat" style="width: @fatProgress.ToString("0.##")%;"></div>
+                    </div>
+                </div>
+
+                <div class="macro-item">
+                    <div class="macro-label">
+                        <span>Fiber</span>
+                        <span>@fiberConsumed.ToString("0.00") / @user.TargetFiber.ToString("0.00") g</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill fill-fiber" style="width: @fiberProgress.ToString("0.##")%;"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card meals-card">
+            <div class="section-title-row">
+                <h2>Today’s Food</h2>
+                <a asp-controller="FoodEntries" asp-action="Create">Add food</a>
+            </div>
+
+            @if (todayLog == null || todayLog.FoodEntries == null || !todayLog.FoodEntries.Any())
+            {
+                <p class="muted-text">No food logged for today yet.</p>
+            }
+            else
+            {
+                @foreach (var entry in todayLog.FoodEntries)
+                {
+                    <div class="food-entry-card">
+                        <div>
+                            <h3>@(entry.SavedMeal?.MealName ?? entry.CustomMealName)</h3>
+                            <p>@entry.TimeEaten.ToString("HH:mm")</p>
+
+                            <div class="meal-macros">
+                                <span class="macro-protein">Protein: @entry.Protein.ToString("0.00") g</span>
+                                <span class="macro-carbs">Carbs: @entry.Carbs.ToString("0.00") g</span>
+                                <span class="macro-fat">Fat: @entry.Fat.ToString("0.00") g</span>
+                                <span class="macro-fiber">Fiber: @entry.Fiber.ToString("0.00") g</span>
+                            </div>
+                        </div>
+
+                        <strong>@entry.Calories kcal</strong>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="card past-meals-card">
+
+            <div class="section-title-row">
+                <h2>Past Meals</h2>
+                <a asp-controller="Home" asp-action="DailyLogs">View history</a>
+            </div>
+
+            @if (Model.PastLogs == null || !Model.PastLogs.Any())
+            {
+                <p class="muted-text">No past meals found.</p>
+            }
+            else
+            {
+                @foreach (var log in Model.PastLogs)
+                {
+                    <div class="past-day-section">
+                        <div class="past-day-header">
+                            <h3>@log.LogDate.ToString("dd MMM yyyy")</h3>
+                            <span>@log.TotalCaloriesConsumed kcal</span>
+                        </div>
+
+                        @foreach (var entry in log.FoodEntries)
+                        {
+                            <div class="past-meal-item">
+                                <div>
+                                    <span>@(entry.SavedMeal?.MealName ?? entry.CustomMealName)</span>
+
+                                    <div class="meal-macros">
+                                        <span class="macro-protein">P: @entry.Protein.ToString("0.00") g</span>
+                                        <span class="macro-carbs">C: @entry.Carbs.ToString("0.00") g</span>
+                                        <span class="macro-fat">F: @entry.Fat.ToString("0.00") g</span>
+                                        <span class="macro-fiber">Fi: @entry.Fiber.ToString("0.00") g</span>
+                                    </div>
+                                </div>
+
+                                <strong>@entry.Calories kcal</strong>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+
+        </div>
+
+    </section>
+</div>

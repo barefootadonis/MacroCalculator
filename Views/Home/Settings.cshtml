@@ -1,0 +1,88 @@
+﻿@model MacroCalculator.Models.User
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Nutrition Goals</p>
+            <h1>Settings</h1>
+            <p class="muted-text">Update your daily calorie and macro targets.</p>
+        </div>
+    </section>
+
+    <div class="settings-layout">
+
+        <div class="card settings-info-card">
+            <h2>Your Current Targets</h2>
+
+            <div class="target-preview calories-box">
+                <span>Calories</span>
+                <strong>@Model.DailyCalorieGoal kcal</strong>
+            </div>
+
+            <div class="target-preview protein-box">
+                <span>Protein</span>
+                <strong>@Model.TargetProtein.ToString("0.00") g</strong>
+            </div>
+
+            <div class="target-preview carbs-box">
+                <span>Carbs</span>
+                <strong>@Model.TargetCarbs.ToString("0.00") g</strong>
+            </div>
+
+            <div class="target-preview fat-box">
+                <span>Fat</span>
+                <strong>@Model.TargetFat.ToString("0.00") g</strong>
+            </div>
+
+            <div class="target-preview fiber-box">
+                <span>Fiber</span>
+                <strong>@Model.TargetFiber.ToString("0.00") g</strong>
+            </div>
+        </div>
+
+        <div class="card form-card">
+            <form asp-action="Settings" asp-controller="Home" method="post">
+
+                <input type="hidden" asp-for="UserId" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Daily Calorie Goal</label>
+                        <input asp-for="DailyCalorieGoal" type="number" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Protein (g)</label>
+                        <input asp-for="TargetProtein" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Carbs (g)</label>
+                        <input asp-for="TargetCarbs" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Fat (g)</label>
+                        <input asp-for="TargetFat" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Fiber (g)</label>
+                        <input asp-for="TargetFiber" type="number" step="0.01" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Save Targets
+                </button>
+
+            </form>
+        </div>
+
+    </div>
+</div>

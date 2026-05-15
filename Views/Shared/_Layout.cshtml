@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNetCore.Http
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MacroCalculator</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>MacroCalc</h2>
+                <button class="close-menu" onclick="toggleMenu()">×</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a asp-controller="Home" asp-action="Index">Dashboard</a>
+                <a asp-controller="Home" asp-action="CreateMeal">Create Meal</a>
+                <a asp-controller="Home" asp-action="SavedMeals">Saved Meals</a>
+                <a asp-controller="Home" asp-action="Ingredients">Saved Ingredients</a>
+                <a asp-controller="Home" asp-action="DailyLogs">Daily Logs</a>
+                <a asp-controller="Home" asp-action="Progress">Progress</a>
+                <a asp-controller="Home" asp-action="Profile">Profile</a>
+                <a asp-controller="Home" asp-action="Notifications" class="sidebar-notification-link">
+                    <span>Notifications 🔔</span>
+
+                    @if (ViewBag.UnreadNotificationCount != null && ViewBag.UnreadNotificationCount > 0)
+                    {
+                        <span class="sidebar-notification-badge">
+                            @ViewBag.UnreadNotificationCount
+                        </span>
+                    }
+                </a>
+                <a asp-controller="Home" asp-action="Settings">Settings</a>
+                @if (Context.Session.GetString("Role") == "Admin")
+                {
+                    <a asp-controller="Home" asp-action="AdminUsers">Admin Users</a>
+                }
+                <a asp-controller="Account" asp-action="Logout" class="logout-link">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <span class="logo-text">MacroCalculator</span>
+
+                <button class="burger-btn" onclick="toggleMenu()">☰</button>
+            </header>
+
+            <section class="page-content">
+                @RenderBody()
+            </section>
+        </main>
+
+    </div>
+
+    <script>
+            function toggleMenu() {
+                document.getElementById("sidebar").classList.toggle("active");
+            }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

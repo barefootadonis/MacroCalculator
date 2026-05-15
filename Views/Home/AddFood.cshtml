@@ -1,0 +1,290 @@
+﻿@model MacroCalculator.ViewModels.AddFoodViewModel
+
+@{
+    ViewData["Title"] = "Add Food";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Today’s Log</p>
+            <h1>Add Food</h1>
+            <p class="muted-text">Log a saved meal, saved ingredient or custom meal.</p>
+        </div>
+    </section>
+
+    <div class="card add-food-card">
+        <form asp-controller="Home" asp-action="AddFood" method="post">
+
+            <div class="form-group">
+                <label>Meal Type</label>
+                <select asp-for="MealType">
+                    <option>Breakfast</option>
+                    <option>Lunch</option>
+                    <option>Dinner</option>
+                    <option>Snack</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>What are you adding?</label>
+                <select asp-for="LogType" id="logType">
+                    <option value="SavedMeal">Saved Meal</option>
+                    <option value="Ingredient">Saved Ingredient</option>
+                    <option value="Custom">Custom Meal</option>
+                </select>
+            </div>
+
+            <div id="savedMealSection">
+                <div class="form-group">
+                    <label>Search saved meal</label>
+                    <input type="text" id="savedMealSearch" placeholder="Type meal name..." />
+                </div>
+
+                <div class="form-group">
+                    <label>Saved Meal</label>
+                    <select asp-for="SavedMealId" id="savedMealSelect">
+                        @foreach (var meal in Model.SavedMeals)
+                        {
+                            <option value="@meal.SavedMealId">
+                                @meal.MealName - @meal.TotalCalories kcal
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Servings</label>
+                    <input asp-for="SavedMealQuantity" type="number" step="0.01" />
+                </div>
+            </div>
+
+            <div id="ingredientSection" style="display:none;">
+
+                <div id="ingredientRows">
+                    <div class="ingredient-row">
+                        <div class="form-group">
+                            <label>Search ingredient</label>
+                            <input type="text" class="ingredient-search" placeholder="Type ingredient name..." />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Saved Ingredient</label>
+                            <select name="IngredientIds" class="ingredient-select">
+                                @foreach (var ingredient in Model.Ingredients)
+                                {
+                                    <option value="@ingredient.IngredientId"
+                                            data-measurement="@ingredient.MeasurementType"
+                                            data-unit="@ingredient.UnitName"
+                                            data-calories="@ingredient.CaloriesPer100g"
+                                            data-protein="@ingredient.ProteinPer100g"
+                                            data-carbs="@ingredient.CarbsPer100g"
+                                            data-fat="@ingredient.FatPer100g"
+                                            data-fiber="@ingredient.FiberPer100g"
+                                            data-default="@ingredient.DefaultServingSize">
+                                        @ingredient.IngredientName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group grams-input">
+                            <label>How many grams?</label>
+                            <input name="IngredientGramsList" class="ingredient-grams" type="number" step="0.01" />
+                        </div>
+
+                        <div class="form-group unit-input" style="display:none;">
+                            <label>How many?</label>
+                            <input name="IngredientQuantityList" class="ingredient-quantity" type="number" step="0.01" value="1" />
+                        </div>
+
+                        <div class="ingredient-preview">
+                            <h3>Calculated Nutrition</h3>
+                            <p><strong class="preview-calories">0</strong> kcal</p>
+                            <p>Protein: <span class="preview-protein">0.00</span>g</p>
+                            <p>Carbs: <span class="preview-carbs">0.00</span>g</p>
+                            <p>Fat: <span class="preview-fat">0.00</span>g</p>
+                            <p>Fiber: <span class="preview-fiber">0.00</span>g</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn-secondary full-width-btn" id="addIngredientRowBtn">
+                    + Add Another Ingredient
+                </button>
+
+            </div>
+
+            <div id="customSection" style="display:none;">
+                <div class="single-form-grid">
+                    <div class="form-group">
+                        <label>Meal Name</label>
+                        <input asp-for="CustomMealName" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Calories</label>
+                        <input asp-for="CustomCalories" type="number" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Protein</label>
+                        <input asp-for="CustomProtein" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Carbs</label>
+                        <input asp-for="CustomCarbs" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fat</label>
+                        <input asp-for="CustomFat" type="number" step="0.01" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fiber</label>
+                        <input asp-for="CustomFiber" type="number" step="0.01" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea asp-for="Notes"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary full-width-btn">Add Food</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const logType = document.getElementById("logType");
+        const savedMealSection = document.getElementById("savedMealSection");
+        const ingredientSection = document.getElementById("ingredientSection");
+        const customSection = document.getElementById("customSection");
+
+        function updateSections() {
+            savedMealSection.style.display = logType.value === "SavedMeal" ? "block" : "none";
+            ingredientSection.style.display = logType.value === "Ingredient" ? "block" : "none";
+            customSection.style.display = logType.value === "Custom" ? "block" : "none";
+        }
+
+        logType.addEventListener("change", updateSections);
+        updateSections();
+
+        function filterSelect(searchInput, select) {
+            const originalOptions = Array.from(select.options);
+
+            searchInput.addEventListener("input", function () {
+                const search = this.value.toLowerCase();
+
+                select.innerHTML = "";
+
+                originalOptions
+                    .filter(option => option.text.toLowerCase().includes(search))
+                    .forEach(option => select.add(option.cloneNode(true)));
+
+                calculateRow(select.closest(".ingredient-row"));
+            });
+        }
+
+        function calculateRow(row) {
+            const select = row.querySelector(".ingredient-select");
+            const option = select.options[select.selectedIndex];
+
+            if (!option) return;
+
+            const measurement = option.dataset.measurement;
+            const unit = option.dataset.unit;
+
+            const calories = parseFloat(option.dataset.calories) || 0;
+            const protein = parseFloat(option.dataset.protein) || 0;
+            const carbs = parseFloat(option.dataset.carbs) || 0;
+            const fat = parseFloat(option.dataset.fat) || 0;
+            const fiber = parseFloat(option.dataset.fiber) || 0;
+            const defaultServing = parseFloat(option.dataset.default) || 100;
+
+            const gramsInput = row.querySelector(".grams-input");
+            const unitInput = row.querySelector(".unit-input");
+            const gramsField = row.querySelector(".ingredient-grams");
+            const quantityField = row.querySelector(".ingredient-quantity");
+
+            let multiplier = 1;
+
+            if (measurement === "Unit") {
+                gramsInput.style.display = "none";
+                unitInput.style.display = "flex";
+
+                gramsField.value = 0;
+
+                const qty = parseFloat(quantityField.value) || 1;
+                multiplier = qty;
+
+                unitInput.querySelector("label").innerText = unit ? `How many ${unit}s?` : "How many?";
+            } else {
+                gramsInput.style.display = "flex";
+                unitInput.style.display = "none";
+
+                quantityField.value = 0;
+
+                const grams = parseFloat(gramsField.value) || defaultServing;
+                multiplier = grams / 100;
+            }
+
+            row.querySelector(".preview-calories").innerText = Math.round(calories * multiplier);
+            row.querySelector(".preview-protein").innerText = (protein * multiplier).toFixed(2);
+            row.querySelector(".preview-carbs").innerText = (carbs * multiplier).toFixed(2);
+            row.querySelector(".preview-fat").innerText = (fat * multiplier).toFixed(2);
+            row.querySelector(".preview-fiber").innerText = (fiber * multiplier).toFixed(2);
+        }
+
+        function setupIngredientRow(row) {
+            const search = row.querySelector(".ingredient-search");
+            const select = row.querySelector(".ingredient-select");
+            const grams = row.querySelector(".ingredient-grams");
+            const quantity = row.querySelector(".ingredient-quantity");
+
+            filterSelect(search, select);
+
+            select.addEventListener("change", () => calculateRow(row));
+            grams.addEventListener("input", () => calculateRow(row));
+            quantity.addEventListener("input", () => calculateRow(row));
+
+            calculateRow(row);
+        }
+
+        document.querySelectorAll(".ingredient-row").forEach(setupIngredientRow);
+
+        document.getElementById("addIngredientRowBtn").addEventListener("click", function () {
+            const rows = document.getElementById("ingredientRows");
+            const firstRow = rows.querySelector(".ingredient-row");
+            const newRow = firstRow.cloneNode(true);
+
+            newRow.querySelector(".ingredient-search").value = "";
+            newRow.querySelector(".ingredient-grams").value = "";
+            newRow.querySelector(".ingredient-quantity").value = "1";
+
+            rows.appendChild(newRow);
+            setupIngredientRow(newRow);
+        });
+
+        const savedMealSearch = document.getElementById("savedMealSearch");
+        const savedMealSelect = document.getElementById("savedMealSelect");
+
+        const savedMealOptions = Array.from(savedMealSelect.options);
+
+        savedMealSearch.addEventListener("input", function () {
+            const search = this.value.toLowerCase();
+
+            savedMealSelect.innerHTML = "";
+
+            savedMealOptions
+                .filter(option => option.text.toLowerCase().includes(search))
+                .forEach(option => savedMealSelect.add(option.cloneNode(true)));
+        });
+    </script>
+}

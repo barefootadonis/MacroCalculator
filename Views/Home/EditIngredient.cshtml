@@ -1,0 +1,111 @@
+﻿@model MacroCalculator.Models.Ingredient
+
+@{
+    ViewData["Title"] = "Edit Ingredient";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Edit Ingredient</p>
+            <h1>@Model.IngredientName</h1>
+            <p class="muted-text">Update this saved ingredient’s calories and macros.</p>
+        </div>
+    </section>
+
+    <div class="card form-card">
+        <form asp-controller="Home" asp-action="CreateIngredient" method="post">
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Ingredient Name</label>
+                    <input asp-for="IngredientName" />
+                </div>
+
+                <div class="form-group">
+                    <label>Measurement Type</label>
+                    <select asp-for="MeasurementType" id="measurementType">
+                        <option value="Grams">Measured in grams</option>
+                        <option value="Unit">Measured by unit</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Unit Name</label>
+                    <input asp-for="UnitName" placeholder="large egg, slice, cup" />
+                </div>
+
+                <div class="form-group">
+                    <label id="calorieLabel">Calories Per 100g</label>
+                    <input asp-for="CaloriesPer100g" type="number" />
+                </div>
+
+                <div class="form-group">
+                    <label id="proteinLabel">Protein Per 100g</label>
+                    <input asp-for="ProteinPer100g" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label id="carbsLabel">Carbs Per 100g</label>
+                    <input asp-for="CarbsPer100g" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label id="fatLabel">Fat Per 100g</label>
+                    <input asp-for="FatPer100g" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label id="fiberLabel">Fiber Per 100g</label>
+                    <input asp-for="FiberPer100g" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label>Default Serving Size</label>
+                    <input asp-for="DefaultServingSize" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <input asp-for="Category" />
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn-primary">Save Ingredient</button>
+        </form>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        const measurementType = document.getElementById("measurementType");
+
+        const calorieLabel = document.getElementById("calorieLabel");
+        const proteinLabel = document.getElementById("proteinLabel");
+        const carbsLabel = document.getElementById("carbsLabel");
+        const fatLabel = document.getElementById("fatLabel");
+        const fiberLabel = document.getElementById("fiberLabel");
+
+        function updateNutritionLabels() {
+            if (measurementType.value === "Unit") {
+                calorieLabel.innerText = "Calories Per Unit";
+                proteinLabel.innerText = "Protein Per Unit";
+                carbsLabel.innerText = "Carbs Per Unit";
+                fatLabel.innerText = "Fat Per Unit";
+                fiberLabel.innerText = "Fiber Per Unit";
+            } else {
+                calorieLabel.innerText = "Calories Per 100g";
+                proteinLabel.innerText = "Protein Per 100g";
+                carbsLabel.innerText = "Carbs Per 100g";
+                fatLabel.innerText = "Fat Per 100g";
+                fiberLabel.innerText = "Fiber Per 100g";
+            }
+        }
+
+        measurementType.addEventListener("change", updateNutritionLabels);
+        updateNutritionLabels();
+    </script>
+}

@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - MacroCalculator</title>
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+
+<body>
+
+    <div class="auth-shell">
+
+        <div class="auth-branding">
+            <h1>MacroMate</h1>
+            <p>Track your meals, macros and progress daily.</p>
+        </div>
+
+        <main class="auth-main">
+            @RenderBody()
+        </main>
+
+    </div>
+
+</body>
+</html>

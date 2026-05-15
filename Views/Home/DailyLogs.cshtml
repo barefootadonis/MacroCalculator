@@ -1,0 +1,120 @@
+﻿@model List<MacroCalculator.Models.DailyLog>
+
+@{
+    ViewData["Title"] = "Daily Logs";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">History</p>
+            <h1>Daily Logs</h1>
+            <p class="muted-text">Search your previous food, calories and macros by date.</p>
+        </div>
+    </section>
+
+    <div class="card">
+        <form asp-action="DailyLogs" asp-controller="Home" method="get" class="date-search-form">
+            <div class="form-group">
+                <label>Search by date</label>
+                <input type="date" name="searchDate" value="@ViewBag.SearchDate" />
+            </div>
+
+            <button type="submit" class="btn-primary">Search</button>
+
+            <a asp-controller="Home" asp-action="DailyLogs" class="btn-secondary">
+                Clear
+            </a>
+        </form>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card">
+            <p class="muted-text">No daily logs found for this date.</p>
+        </div>
+    }
+    else
+    {
+        <section class="daily-log-list">
+            @foreach (var log in Model)
+            {
+                var calories = log.FoodEntries?.Sum(f => f.Calories) ?? 0;
+                var protein = log.FoodEntries?.Sum(f => f.Protein) ?? 0;
+                var carbs = log.FoodEntries?.Sum(f => f.Carbs) ?? 0;
+                var fat = log.FoodEntries?.Sum(f => f.Fat) ?? 0;
+                var fiber = log.FoodEntries?.Sum(f => f.Fiber) ?? 0;
+
+                <div class="daily-log-card">
+                    <div class="daily-log-header">
+                        <div>
+                            <p class="small-heading">Log Date</p>
+                            <h2>@log.LogDate.ToString("dddd, dd MMM yyyy")</h2>
+                        </div>
+
+                        <strong class="daily-log-calories">@calories kcal</strong>
+                    </div>
+
+                    <div class="daily-log-macro-grid">
+                        <div class="macro-summary-box calories-box">
+                            <span>Calories</span>
+                            <strong>@calories kcal</strong>
+                        </div>
+
+                        <div class="macro-summary-box protein-box">
+                            <span>Protein</span>
+                            <strong>@protein.ToString("0.00") g</strong>
+                        </div>
+
+                        <div class="macro-summary-box carbs-box">
+                            <span>Carbs</span>
+                            <strong>@carbs.ToString("0.00") g</strong>
+                        </div>
+
+                        <div class="macro-summary-box fat-box">
+                            <span>Fat</span>
+                            <strong>@fat.ToString("0.00") g</strong>
+                        </div>
+
+                        <div class="macro-summary-box fiber-box">
+                            <span>Fiber</span>
+                            <strong>@fiber.ToString("0.00") g</strong>
+                        </div>
+                    </div>
+
+                    <div class="logged-meals-section">
+                        <h3>Meals Logged</h3>
+
+                        @if (log.FoodEntries == null || !log.FoodEntries.Any())
+                        {
+                            <p class="muted-text">No meals logged for this day.</p>
+                        }
+                        else
+                        {
+                            @foreach (var entry in log.FoodEntries)
+                            {
+                                <div class="logged-meal-row">
+                                    <div>
+                                        <h4>@(entry.SavedMeal?.MealName ?? entry.CustomMealName)</h4>
+                                        <p>@entry.TimeEaten.ToString("HH:mm")</p>
+
+                                        <div class="meal-macros">
+                                            <span class="macro-protein">P: @entry.Protein.ToString("0.00") g</span>
+                                            <span class="macro-carbs">C: @entry.Carbs.ToString("0.00") g</span>
+                                            <span class="macro-fat">F: @entry.Fat.ToString("0.00") g</span>
+                                            <span class="macro-fiber">Fi: @entry.Fiber.ToString("0.00") g</span>
+                                        </div>
+                                    </div>
+
+                                    <strong>@entry.Calories kcal</strong>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+    }
+
+</div>

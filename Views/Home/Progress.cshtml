@@ -1,0 +1,203 @@
+﻿@model MacroCalculator.ViewModels.ProgressViewModel
+
+@{
+    ViewData["Title"] = "Progress";
+
+    var weightLabels = Model.WeightProgress.Select(w => w.DateRecorded.ToString("dd MMM")).ToList();
+    var actualWeights = Model.WeightProgress.Select(w => w.Weight).ToList();
+    var goalWeights = Model.WeightProgress.Select(w => Model.User.GoalWeight).ToList();
+
+    var logLabels = Model.DailyLogs.Select(d => d.LogDate.ToString("dd MMM")).ToList();
+
+    var actualCalories = Model.DailyLogs
+        .Select(d => d.FoodEntries?.Sum(f => f.Calories) ?? 0)
+        .ToList();
+
+    var targetCalories = Model.DailyLogs
+        .Select(d => Model.User.DailyCalorieGoal)
+        .ToList();
+
+    var actualProtein = Model.DailyLogs
+        .Select(d => Math.Round(d.FoodEntries?.Sum(f => f.Protein) ?? 0, 2))
+        .ToList();
+
+    var targetProtein = Model.DailyLogs
+        .Select(d => Model.User.TargetProtein)
+        .ToList();
+
+    var actualCarbs = Model.DailyLogs
+        .Select(d => Math.Round(d.FoodEntries?.Sum(f => f.Carbs) ?? 0, 2))
+        .ToList();
+
+    var targetCarbs = Model.DailyLogs
+        .Select(d => Model.User.TargetCarbs)
+        .ToList();
+
+    var actualFat = Model.DailyLogs
+        .Select(d => Math.Round(d.FoodEntries?.Sum(f => f.Fat) ?? 0, 2))
+        .ToList();
+
+    var targetFat = Model.DailyLogs
+        .Select(d => Model.User.TargetFat)
+        .ToList();
+
+    var actualFiber = Model.DailyLogs
+        .Select(d => Math.Round(d.FoodEntries?.Sum(f => f.Fiber) ?? 0, 2))
+        .ToList();
+
+    var targetFiber = Model.DailyLogs
+        .Select(d => Model.User.TargetFiber)
+        .ToList();
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Progress</p>
+            <h1>@Model.User.Username's Progress</h1>
+            <p class="muted-text">View your weight, calories and macro trends.</p>
+        </div>
+    </section>
+
+    <section class="progress-grid">
+
+        <div class="card chart-card">
+            <h2>Weight Progress</h2>
+            <p class="muted-text">Actual weight compared with goal weight.</p>
+            <canvas id="weightChart"></canvas>
+        </div>
+
+        <div class="card chart-card">
+            <h2>Calories</h2>
+            <p class="muted-text">Actual calories compared with your daily goal.</p>
+            <canvas id="calorieChart"></canvas>
+        </div>
+
+        <div class="card chart-card full-width">
+            <h2>Macros</h2>
+            <p class="muted-text">Actual macros compared with your daily targets.</p>
+            <canvas id="macroChart"></canvas>
+        </div>
+
+    </section>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const weightLabels = @Html.Raw(Json.Serialize(weightLabels));
+        const actualWeights = @Html.Raw(Json.Serialize(actualWeights));
+        const goalWeights = @Html.Raw(Json.Serialize(goalWeights));
+
+        const logLabels = @Html.Raw(Json.Serialize(logLabels));
+
+        const actualCalories = @Html.Raw(Json.Serialize(actualCalories));
+        const targetCalories = @Html.Raw(Json.Serialize(targetCalories));
+
+        const actualProtein = @Html.Raw(Json.Serialize(actualProtein));
+        const targetProtein = @Html.Raw(Json.Serialize(targetProtein));
+
+        const actualCarbs = @Html.Raw(Json.Serialize(actualCarbs));
+        const targetCarbs = @Html.Raw(Json.Serialize(targetCarbs));
+
+        const actualFat = @Html.Raw(Json.Serialize(actualFat));
+        const targetFat = @Html.Raw(Json.Serialize(targetFat));
+
+        const actualFiber = @Html.Raw(Json.Serialize(actualFiber));
+        const targetFiber = @Html.Raw(Json.Serialize(targetFiber));
+
+        new Chart(document.getElementById('weightChart'), {
+        type: 'line',
+        data: {
+        labels: weightLabels,
+        datasets: [
+        {
+        label: 'Current Weight',
+        data: actualWeights,
+        borderColor: '#4A90E2',
+        backgroundColor: '#4A90E233',
+        tension: 0.35
+        },
+        {
+        label: 'Goal Weight',
+        data: goalWeights,
+        borderColor: '#43B77A',
+        borderDash: [6, 6],
+        tension: 0.35
+        }
+        ]
+        }
+        });
+
+        new Chart(document.getElementById('calorieChart'), {
+        type: 'bar',
+        data: {
+        labels: logLabels,
+        datasets: [
+        {
+        label: 'Actual Calories',
+        data: actualCalories,
+        backgroundColor: '#43B77A'
+        },
+        {
+        label: 'Target Calories',
+        data: targetCalories,
+        backgroundColor: '#BDEFD2'
+        }
+        ]
+        }
+        });
+
+        new Chart(document.getElementById('macroChart'), {
+        type: 'bar',
+        data: {
+        labels: logLabels,
+        datasets: [
+        {
+        label: 'Protein',
+        data: actualProtein,
+        backgroundColor: '#4A90E2'
+        },
+        {
+        label: 'Protein Target',
+        data: targetProtein,
+        backgroundColor: '#BFD9F7'
+        },
+        {
+        label: 'Carbs',
+        data: actualCarbs,
+        backgroundColor: '#F4A340'
+        },
+        {
+        label: 'Carbs Target',
+        data: targetCarbs,
+        backgroundColor: '#F8D8AA'
+        },
+        {
+        label: 'Fat',
+        data: actualFat,
+        backgroundColor: '#9B6DE3'
+        },
+        {
+        label: 'Fat Target',
+        data: targetFat,
+        backgroundColor: '#D9C8F5'
+        },
+        {
+        label: 'Fiber',
+        data: actualFiber,
+        backgroundColor: '#F48FB1'
+        },
+        {
+        label: 'Fiber Target',
+        data: targetFiber,
+        backgroundColor: '#F8C7D8'
+        }
+        ]
+        }
+        });
+    </script>
+}

@@ -1,0 +1,54 @@
+﻿@model List<MacroCalculator.Models.SavedMeal>
+
+@{
+    ViewData["Title"] = "Saved Meals";
+
+    var favourites = Model.Where(m => m.IsFavourite).ToList();
+    var otherMeals = Model.Where(m => !m.IsFavourite).ToList();
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Reusable Meals</p>
+            <h1>Saved Meals</h1>
+            <p class="muted-text">Meals you can quickly add again without recalculating.</p>
+        </div>
+
+        <a class="btn-primary" asp-controller="Home" asp-action="CreateMeal">
+            + Create Meal
+        </a>
+    </section>
+
+    @if (!Model.Any())
+    {
+        <div class="card">
+            <p class="muted-text">You have no saved meals yet.</p>
+        </div>
+    }
+    else
+    {
+        @if (favourites.Any())
+        {
+            <h2 class="saved-section-heading">Favourite Meals</h2>
+
+            <section class="saved-meals-grid">
+                @foreach (var meal in favourites)
+                {
+                    @await Html.PartialAsync("_SavedMealCard", meal)
+                }
+            </section>
+        }
+
+        <h2 class="saved-section-heading">All Saved Meals</h2>
+
+        <section class="saved-meals-grid">
+            @foreach (var meal in otherMeals)
+            {
+                @await Html.PartialAsync("_SavedMealCard", meal)
+            }
+        </section>
+    }
+
+</div>

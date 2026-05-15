@@ -1,0 +1,87 @@
+﻿@model MacroCalculator.Models.SavedMeal
+
+@{
+    ViewData["Title"] = "Edit Meal";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Edit Meal</p>
+            <h1>@Model.MealName</h1>
+            <p class="muted-text">Update this saved meal’s calories and macros.</p>
+        </div>
+    </section>
+
+    <div class="card form-card">
+        <form asp-action="EditMeal" asp-controller="Home" method="post">
+
+            <input type="hidden" asp-for="SavedMealId" />
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Meal Name</label>
+                    <input asp-for="MealName" />
+                </div>
+
+                <div class="form-group">
+                    <label>Meal Category</label>
+                    <select asp-for="MealCategory">
+                        <option value="">Select category</option>
+                        <option>Breakfast</option>
+                        <option>Lunch</option>
+                        <option>Dinner</option>
+                        <option>Snack</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Serving Size</label>
+                    <input asp-for="ServingSize" />
+                </div>
+
+                <div class="form-group">
+                    <label>Total Calories</label>
+                    <input asp-for="TotalCalories" type="number" />
+                </div>
+
+                <div class="form-group">
+                    <label>Protein</label>
+                    <input asp-for="Protein" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label>Carbs</label>
+                    <input asp-for="Carbs" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label>Fat</label>
+                    <input asp-for="Fat" type="number" step="0.01" />
+                </div>
+
+                <div class="form-group">
+                    <label>Fiber</label>
+                    <input asp-for="Fiber" type="number" step="0.01" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea asp-for="Description"></textarea>
+            </div>
+
+            <div class="form-check">
+                <input asp-for="IsFavourite" />
+                <label>Mark as favourite</label>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Save Changes
+            </button>
+
+        </form>
+    </div>
+
+</div>

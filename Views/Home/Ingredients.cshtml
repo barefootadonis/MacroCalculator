@@ -1,0 +1,28 @@
+﻿@model List<MacroCalculator.Models.Ingredient>
+
+@{
+    ViewData["Title"] = "Saved Ingredients";
+}
+
+<div class="dashboard-page">
+
+    <section class="welcome-section">
+        <div>
+            <p class="small-heading">Reusable Ingredients</p>
+            <h1>Saved Ingredients</h1>
+            <p class="muted-text">Ingredients you can reuse when logging food.</p>
+        </div>
+
+        <a class="btn-primary" asp-controller="Home" asp-action="CreateIngredient">
+            + Create Ingredient
+        </a>
+    </section>
+
+    <section class="saved-meals-grid">
+        @foreach (var ingredient in Model)
+        {
+            @await Html.PartialAsync("_IngredientCard", ingredient)
+        }
+    </section>
+
+</div>
